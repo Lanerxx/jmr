@@ -9,17 +9,13 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Data
 @NoArgsConstructor
-public class Profession {
+public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int p_id;
 
     @NotNull
     @Column(length = 20)
-    private String p_m_class;
-
-    @NotNull
-    @Column(length = 20)
-    private String p_s_class;
+    private String p_name;
 
 }

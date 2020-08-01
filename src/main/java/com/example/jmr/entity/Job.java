@@ -35,7 +35,7 @@ public class Job {
 
     @NotNull
     @ManyToOne
-//    @Column(name = "j_po_id")
+    @JoinColumn(name = "j_po_id")
     private Position j_po_id;
 
     @NotNull
@@ -53,7 +53,7 @@ public class Job {
 
     @NotNull
     @ManyToOne
-//    @Column(name = "j_pr_id")
+    @JoinColumn(name = "j_pr_id")
     private Profession j_pr_id;
 
     @NotNull
@@ -80,7 +80,7 @@ public class Job {
 
     @ManyToOne
     @NotNull
-//    @Column(name = "j_c_id")
+    @JoinColumn(name = "j_c_id")
     private Company j_c_id;
 
 

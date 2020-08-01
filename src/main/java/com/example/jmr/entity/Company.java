@@ -19,7 +19,7 @@ public class Company {
     private String c_name;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 60)
     private String c_password;
 
     @NotNull

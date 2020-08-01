@@ -16,17 +16,17 @@ public class Job_match_result {
 
     @NotNull
     @ManyToOne
-//    @JoinColumn(name = "jmr_s_id")
+    @JoinColumn(name = "jmr_s_id")
     private Student jmr_s_id;
 
     @NotNull
     @ManyToOne
-//    @Column(name = "jmr_c_id")
+    @JoinColumn(name = "jmr_c_id")
     private Company jmr_c_id;
 
     @NotNull
     @ManyToOne
-//    @Column(name = "jmr_j_id")
+    @JoinColumn(name = "jmr_j_id")
     private Job jmr_j_id;
 
     @NotNull

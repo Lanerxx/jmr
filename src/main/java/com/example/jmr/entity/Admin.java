@@ -23,7 +23,7 @@ public class Admin {
     private String a_name;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 60)
     private String a_password;
 
     @NotNull

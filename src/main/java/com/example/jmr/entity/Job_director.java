@@ -19,7 +19,7 @@ public class Job_director {
     private String jd_name;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 60)
     private String jd_password;
 
     @NotNull

@@ -48,7 +48,7 @@ public class Resume {
 
     @NotNull
     @OneToOne
-//    @Column(name = r_s_id)
+    @JoinColumn(name = "r_s_id")
     private Student r_s_id;
 
 

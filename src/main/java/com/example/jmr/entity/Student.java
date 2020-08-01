@@ -41,7 +41,7 @@ public class Student {
     private String s_name;
 
     @NotNull
-    @Column(length = 20)
+    @Column(length = 60)
     private String s_password;
 
     @Column(length = 20)
@@ -63,7 +63,7 @@ public class Student {
 
     @ManyToOne
     @NotNull
-//    @Column(name = "s_profession")
+    @JoinColumn(name = "s_profession")
     private Profession s_profession;
 
     @NotNull
@@ -85,7 +85,7 @@ public class Student {
 
     @ManyToOne
     @NotNull
-//    @Column(name = "s_e_position")
+    @JoinColumn(name = "s_e_position")
     private Position s_e_position;
 
     @NotNull

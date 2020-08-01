@@ -15,6 +15,6 @@ public class Company_job_PK implements Serializable {
     private Company c_id;
 
     @OneToOne
-//    @Column(name = "j_id")
+    @JoinColumn(name = "j_id")
     private Job j_id;
 }

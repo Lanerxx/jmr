@@ -33,6 +33,9 @@ public class CompanyService {
         companyRepository.save(company);
         return company;
     }
+    public Company getCompany(String name){
+        return companyRepository.findByC_name(name).orElse(null);
+    }
 
     /*-----------------职位信息（Job）-------------------
     -------检索：公司

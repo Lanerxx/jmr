@@ -2,12 +2,15 @@ package com.example.jmr.component;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class MyToken {
-    public enum ROLE{
-        系统管理员, 普通管理员, 学生用户, 企业用户, 就业专员
+    public enum ROLES{
+        SYSTEM_ADMIN, GENERAL_ADMIN, STUDENT, COMPANY, JOB_DIRECTOR
     }
     //Avoid hard coding
     public static final String AUTHORIZATION = "authorization";
@@ -15,6 +18,6 @@ public class MyToken {
     public static final String ROLE = "role";
 
     private int id;
-    private ROLE role;
+    private ROLES role;
 }
 

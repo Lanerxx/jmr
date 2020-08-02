@@ -33,8 +33,8 @@ public class CompanyService {
         companyRepository.save(company);
         return company;
     }
-    public Company getCompany(String name){
-        return companyRepository.findByC_name(name).orElse(null);
+    public Company getCompanyByTelephone(String telephone){
+        return companyRepository.getCompanyByC_telephone(telephone).orElse(null);
     }
 
     /*-----------------职位信息（Job）-------------------

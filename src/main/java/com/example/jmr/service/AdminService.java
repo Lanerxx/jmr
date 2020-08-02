@@ -28,6 +28,6 @@ public class AdminService {
         return adminRepository.findById(aid).orElse(null);
     }
     public Admin getAdmin(String name){
-        return adminRepository.findByA_name(name).orElse(null);
+        return adminRepository.getAdminByA_name(name).orElse(null);
     }
 }

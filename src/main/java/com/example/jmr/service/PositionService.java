@@ -24,4 +24,7 @@ public class PositionService {
         positionRepository.save(position);
         return position;
     }
+    public Position getPosition(String name){
+        return positionRepository.getPositionByP_name(name).orElse(null);
+    }
 }

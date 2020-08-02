@@ -56,20 +56,28 @@ public class LoginController {
 
     @PostMapping("login")
     public Map login(@RequestBody UserVo login, HttpServletResponse response) {
+        log.debug("{}",login);
         log.debug("{}/ {}/ {}/ {}/", login.isAdmin(),login.isCompany(),login.isStudent(),login.isJobDirector());
-        String userName = login.getUserName();
         String userPassword = login.getUserPassword();
         int userId = 0;
         MyToken token = new MyToken();
         String roleCode = "";
-        if (userName == null || userPassword == null){
+        if ( userPassword == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "用户名和密码不能为空。");
+                    "密码不能为空。");
         }
+        //管理员使用用户名和密码登陆
         if (login.isAdmin() == true){
+            log.debug("{}",login.isAdmin());
+            String userName = login.getUserName();
+            if (userName == null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "用户名不能为空。");
+            }
             Admin admin = Optional.ofNullable(adminService.getAdmin(userName))
                     .filter(a -> encoder.matches(userPassword, a.getA_password()))
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户名和密码错误"));
+            log.debug("{}", admin);
             userId = admin.getA_id();
             if (Admin.A_TYPE.系统管理员 == admin.getA_type()){
                 roleCode = roleSystemAdmin;
@@ -80,29 +88,37 @@ public class LoginController {
                 token.setRole(MyToken.ROLES.GENERAL_ADMIN);
             }
         }
-        if (login.isStudent() == true){
-            Student student = Optional.ofNullable(studentService.getStudent(userName))
-                    .filter(s -> encoder.matches(userPassword, s.getS_password()))
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户名和密码错误"));
-            userId = student.getS_id();
-            token.setRole(MyToken.ROLES.STUDENT);
-            roleCode = roleStudent;
-        }
-        if (login.isCompany() == true){
-            Company company = Optional.ofNullable(companyService.getCompany(userName))
-                    .filter(c -> encoder.matches(userPassword, c.getC_password()))
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户名和密码错误"));
-            userId = company.getC_id();
-            token.setRole(MyToken.ROLES.COMPANY);
-            roleCode = roleCompany;
-        }
-        if (login.isJobDirector() == true){
-            Job_director jobDirector = Optional.ofNullable(jobDirectorService.getJobDirector(userName))
-                    .filter(jd -> encoder.matches(userPassword, jd.getJd_password()))
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户名和密码错误"));
-            userId = jobDirector.getJd_id();
-            token.setRole(MyToken.ROLES.JOB_DIRECTOR);
-            roleCode = roleJobDirector;
+        //学生、企业和就业专员使用电话号和密码登陆
+        else {
+            String userPhoneNumber = login.getUserPhoneNumber();
+            if (userPhoneNumber == null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "电话号不能为空。");
+            }
+            if(login.isStudent() == true){
+                Student student = Optional.ofNullable(studentService.getStudentByTelephone(userPhoneNumber))
+                        .filter(s -> encoder.matches(userPassword, s.getS_password()))
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "电话号和密码错误"));
+                userId = student.getS_id();
+                token.setRole(MyToken.ROLES.STUDENT);
+                roleCode = roleStudent;
+            }
+            else if (login.isCompany() == true){
+                Company company = Optional.ofNullable(companyService.getCompanyByTelephone(userPhoneNumber))
+                        .filter(c -> encoder.matches(userPassword, c.getC_password()))
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "电话号和密码错误"));
+                userId = company.getC_id();
+                token.setRole(MyToken.ROLES.COMPANY);
+                roleCode = roleCompany;
+            }
+            else if (login.isJobDirector() == true){
+                Job_director jobDirector = Optional.ofNullable(jobDirectorService.getJobDirectorByTelephone(userPhoneNumber))
+                        .filter(jd -> encoder.matches(userPassword, jd.getJd_password()))
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "电话号和密码错误"));
+                userId = jobDirector.getJd_id();
+                token.setRole(MyToken.ROLES.JOB_DIRECTOR);
+                roleCode = roleJobDirector;
+            }
         }
         token.setId(userId);
         String auth = encrypt.encryptToken(token);

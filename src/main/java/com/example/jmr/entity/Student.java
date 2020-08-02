@@ -41,7 +41,7 @@ public class Student {
     private String s_name;
 
     @NotNull
-    @Column(length = 60)
+    @Column(length = 72)
     private String s_password;
 
     @Column(length = 20)

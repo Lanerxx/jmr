@@ -1,7 +1,7 @@
 package com.example.jmr.service;
 
 import com.example.jmr.entity.Profession;
-import com.example.jmr.repository.ProfesstionRepository;
+import com.example.jmr.repository.ProfessionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProfessionService {
     @Autowired
-    private ProfesstionRepository professtionRepository;
+    private ProfessionRepository professtionRepository;
 
     /*--------------专业信息（Profession）---------------
     -------检索：管理员
@@ -23,5 +23,8 @@ public class ProfessionService {
     public Profession addProfession(Profession profession){
         professtionRepository.save(profession);
         return profession;
+    }
+    public Profession getProfessionBySClass(String sClass){
+        return professtionRepository.getProfessionByP_s_class(sClass).orElse(null);
     }
 }

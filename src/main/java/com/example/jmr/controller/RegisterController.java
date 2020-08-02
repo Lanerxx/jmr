@@ -1,8 +1,12 @@
 package com.example.jmr.controller;
 
 import com.example.jmr.entity.Company;
+import com.example.jmr.entity.Position;
+import com.example.jmr.entity.Profession;
 import com.example.jmr.entity.Student;
 import com.example.jmr.service.CompanyService;
+import com.example.jmr.service.PositionService;
+import com.example.jmr.service.ProfessionService;
 import com.example.jmr.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +31,34 @@ public class RegisterController {
     private CompanyService companyService;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private ProfessionService professionService;
+    @Autowired
+    private PositionService positionService;
 
     @PostMapping("company")
     public Map registerCompany(@Valid @RequestBody Company company){
-        Company c = new Company();
-        if(company.getC_name()!=null && company.getC_password()!=null){
-            if (companyService.getCompany(company.getC_name())!=null){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "该企业名已注册！");
-            }
-            c.setC_name(company.getC_name());
-            c.setC_password(encoder.encode(company.getC_password()));
-            companyService.addCompany(c);
-        }
-        else{
+        if (company.getC_name() == null || company.getC_password() == null ||
+                company.getC_s_code() == null || company.getC_description() == null ||
+                company.getC_contact() == null || company.getC_telephone() == null ||
+                company.getC_email() == null
+        ){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "企业名和密码不能为空");
+                    "您还有未填写的必填信息！");
         }
+        if (studentService.getStudentByTelephone(company.getC_telephone())!=null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "该手机号已注册！");
+        }
+        Company c = new Company();
+        c.setC_name(company.getC_name());
+        c.setC_password(encoder.encode(company.getC_password()));
+        c.setC_s_code(company.getC_s_code());
+        c.setC_description(company.getC_description());
+        c.setC_contact(company.getC_contact());
+        c.setC_telephone(company.getC_telephone());
+        c.setC_email(company.getC_email());
+        companyService.addCompany(c);
         return Map.of(
                 "company",c
         );
@@ -51,20 +66,65 @@ public class RegisterController {
 
     @PostMapping("student")
     public Map registerStudent(@Valid @RequestBody Student student){
-        Student s = new Student();
-        if(student.getS_name()!=null && student.getS_password()!=null){
-            if (companyService.getCompany(student.getS_name())!=null){
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "该学生名已注册！");
-            }
-            s.setS_name(student.getS_name());
-            s.setS_password(encoder.encode(student.getS_password()));
-            studentService.addStudent(s);
-        }
-        else{
+        if (student.getS_name() == null || student.getS_password() == null ||
+                student.getS_sex() == null || student.getS_birthday() == null||
+                student.getS_college() == null || student.getS_c_level() == null ||
+                student.getS_profession().getP_s_class() == null ||
+                student.getS_e_history() == null || student.getS_n_province() == null||
+                student.getS_n_city() == null  ||
+                student.getS_s_range() == null || student.getS_e_position() == null ||
+                student.getS_e_city() == null || student.getS_g_time() == null ||
+                student.getS_telephone() == null || student.getS_email() == null ||
+                student.getS_if_work() == null
+        ){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "姓名和密码不能为空");
+                    "您还有未填写的必填信息！");
         }
+        if (student.getS_if_work().equals(Student.S_IF_WORK.已就业)){
+            if (student.getS_w_city() == null || student.getS_company() == null){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "您还未填写已就业的城市或企业！");
+            }
+        }
+        if (studentService.getStudentByTelephone(student.getS_telephone())!=null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "该手机号已注册！");
+        }
+        Profession profession = professionService.getProfessionBySClass(student.getS_profession().getP_s_class());
+        if (profession == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "您填写的专业错误！");
+        }
+        Position position = positionService.getPosition(student.getS_e_position().getP_name());
+        if (position == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "您填写的岗位错误！");
+        }
+        Student s = new Student();
+        s.setS_name(student.getS_name());
+        s.setS_password(encoder.encode(student.getS_password()));
+        if (student.getS_id_card() != null) s.setS_id_card(student.getS_id_card());
+        s.setS_sex(student.getS_sex());
+        s.setS_birthday(student.getS_birthday());
+        s.setS_college(student.getS_college());
+        s.setS_c_level(student.getS_c_level());
+        s.setS_profession(profession);
+        s.setS_e_history(student.getS_e_history());
+        s.setS_n_province(student.getS_n_province());
+        s.setS_n_city(student.getS_n_city());
+        if (student.getS_f_language()!=0) s.setS_f_language(student.getS_f_language());
+        s.setS_s_range(student.getS_s_range());
+        s.setS_e_position(position);
+        s.setS_e_city(student.getS_e_city());
+        s.setS_g_time(student.getS_g_time());
+        s.setS_telephone(student.getS_telephone());
+        s.setS_email(student.getS_email());
+        s.setS_if_work(student.getS_if_work());
+        if (student.getS_if_work().equals(Student.S_IF_WORK.已就业)){
+            s.setS_w_city(student.getS_w_city());
+            s.setS_company(student.getS_company());
+        }
+        studentService.addStudent(s);
         return Map.of(
                 "student",s
         );

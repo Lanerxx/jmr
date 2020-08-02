@@ -32,8 +32,8 @@ public class StudentService {
         studentRepository.save(student);
         return student;
     }
-    public Student getStudent(String name){
-        return studentRepository.findByS_name(name).orElse(null);
+    public Student getStudentByTelephone(String telephone){
+        return studentRepository.getStudentByS_telephone(telephone).orElse(null);
     }
 
     /*------------简历信息（StudentResume）--------------

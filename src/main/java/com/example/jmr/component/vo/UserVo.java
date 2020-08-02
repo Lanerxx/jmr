@@ -6,10 +6,11 @@ import javax.persistence.Column;
 
 @Data
 public class UserVo {
-    String userName;
+    String userPhoneNumber;
     String userPassword;
-    boolean isAdmin;
-    boolean isStudent;
-    boolean isCompany;
-    boolean isJobDirector;
+    String userName;
+    boolean admin;
+    boolean student;
+    boolean company;
+    boolean jobDirector;
 }

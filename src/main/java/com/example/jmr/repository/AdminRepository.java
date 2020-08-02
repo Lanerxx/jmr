@@ -1,12 +1,15 @@
 package com.example.jmr.repository;
 
 import com.example.jmr.entity.Admin;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
 public interface AdminRepository extends BaseRepository<Admin,Integer>{
-    Optional<Admin> findByA_name(String name);
+    @Query("SELECT a FROM Admin  a WHERE a.a_name=:name")
+    Optional<Admin> getAdminByA_name (@Param("name")String name);
 
 }

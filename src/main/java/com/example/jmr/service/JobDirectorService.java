@@ -24,8 +24,8 @@ public class JobDirectorService {
         jobDirectorRepository.save(job_director);
         return job_director;
     }
-    public Job_director getJobDirector(String name){
-        return jobDirectorRepository.findByJd_name(name).orElse(null);
+    public Job_director getJobDirectorByTelephone(String telephone){
+        return jobDirectorRepository.getJobDirectorByJd_telephone(telephone).orElse(null);
     }
 
 }

@@ -12,8 +12,8 @@ public class RequestComponent {
                 .getAttribute("id", RequestAttributes.SCOPE_REQUEST);
     }
 
-    public MyToken.ROLE getRole() {
-        return (MyToken.ROLE) RequestContextHolder.currentRequestAttributes()
+    public MyToken.ROLES getRole() {
+        return (MyToken.ROLES) RequestContextHolder.currentRequestAttributes()
                 .getAttribute("role", RequestAttributes.SCOPE_REQUEST);
     }
 }

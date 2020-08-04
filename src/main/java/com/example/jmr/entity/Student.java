@@ -10,28 +10,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class Student {
-    public enum S_SEX {
-        男, 女
-    }
-    public enum S_C_LEVEL{
-        _985, _211, 一批本科, 二批本科, 专科, 高职
-    }
-    public enum S_E_HISTORY{
-        博士, 硕士, 本科, 专科
-    }
-    public enum S_S_RANGE{
-        _4K以下, _4_6K, _6_8K, _8K以上,
-    }
-    public enum S_E_CITY{
-        烟台, 其他
-    }
-    public enum S_IF_WORK{
-        未就业, 已就业
-    }
-    public enum S_F_LANGUAGE{
-        NO, JN2, JN3, ECET4, ECET6
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int s_id;
@@ -48,7 +26,7 @@ public class Student {
     private String s_id_card;
 
     @NotNull
-    private S_SEX s_sex;
+    private EumnWarehouse.S_SEX s_sex;
 
     @NotNull
     @Column(length = 20)
@@ -59,7 +37,7 @@ public class Student {
     private String s_college;
 
     @NotNull
-    private S_C_LEVEL s_c_level;
+    private EumnWarehouse.C_LEVEL s_c_level;
 
     @ManyToOne
     @NotNull
@@ -67,7 +45,7 @@ public class Student {
     private Profession s_profession;
 
     @NotNull
-    private S_E_HISTORY s_e_history;
+    private EumnWarehouse.E_HISTORY s_e_history;
 
     @NotNull
     @Column(length = 20)
@@ -81,7 +59,7 @@ public class Student {
     private int s_f_language;
 
     @NotNull
-    private S_S_RANGE s_s_range;
+    private EumnWarehouse.S_RANGE s_s_range;
 
     @ManyToOne
     @NotNull
@@ -89,7 +67,7 @@ public class Student {
     private Position s_e_position;
 
     @NotNull
-    private S_E_CITY s_e_city;
+    private EumnWarehouse.E_CITY s_e_city;
 
     @NotNull
     @Column(length = 20)
@@ -107,7 +85,7 @@ public class Student {
     private String s_s_attachment;
 
     @NotNull
-    private S_IF_WORK s_if_work;
+    private EumnWarehouse.IF_WORK s_if_work;
 
     @Column(length = 20)
     private String s_w_city;

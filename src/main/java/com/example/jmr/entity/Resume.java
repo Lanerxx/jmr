@@ -49,7 +49,7 @@ public class Resume {
     @NotNull
     @OneToOne
     @JoinColumn(name = "r_s_id")
-    private Student r_s_id;
+    private Student r_student;
 
 
 }

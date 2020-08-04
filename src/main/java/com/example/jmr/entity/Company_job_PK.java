@@ -12,9 +12,9 @@ import java.io.Serializable;
 public class Company_job_PK implements Serializable {
     @OneToOne
     @JoinColumn(name = "c_id")
-    private Company c_id;
+    private Company company;
 
     @OneToOne
     @JoinColumn(name = "j_id")
-    private Job j_id;
+    private Job job;
 }

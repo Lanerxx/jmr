@@ -17,17 +17,22 @@ public class Student_match_result {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "smr_c_id")
-    private Company smr_c_id;
+    private Company smr_company;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "smr_s_id")
-    private Student smr_s_id;
+    private Student smr_student;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "smr_r_id")
-    private Resume smr_r_id;
+    private Resume smr_resume;
+
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "smr_b_id")
+    private Smr_base smr_base;
 
     @NotNull
     private int smr_value;

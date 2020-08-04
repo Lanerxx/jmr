@@ -56,8 +56,6 @@ public class LoginController {
 
     @PostMapping("login")
     public Map login(@RequestBody UserVo login, HttpServletResponse response) {
-        log.debug("{}",login);
-        log.debug("{}/ {}/ {}/ {}/", login.isAdmin(),login.isCompany(),login.isStudent(),login.isJobDirector());
         String userPassword = login.getUserPassword();
         int userId = 0;
         MyToken token = new MyToken();
@@ -95,7 +93,7 @@ public class LoginController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "电话号不能为空。");
             }
-            if(login.isStudent() == true){
+            if(login.isStudent()){
                 Student student = Optional.ofNullable(studentService.getStudentByTelephone(userPhoneNumber))
                         .filter(s -> encoder.matches(userPassword, s.getS_password()))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "电话号和密码错误"));
@@ -103,7 +101,7 @@ public class LoginController {
                 token.setRole(MyToken.ROLES.STUDENT);
                 roleCode = roleStudent;
             }
-            else if (login.isCompany() == true){
+            else if (login.isCompany()){
                 Company company = Optional.ofNullable(companyService.getCompanyByTelephone(userPhoneNumber))
                         .filter(c -> encoder.matches(userPassword, c.getC_password()))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "电话号和密码错误"));
@@ -111,7 +109,7 @@ public class LoginController {
                 token.setRole(MyToken.ROLES.COMPANY);
                 roleCode = roleCompany;
             }
-            else if (login.isJobDirector() == true){
+            else if (login.isJobDirector()){
                 Job_director jobDirector = Optional.ofNullable(jobDirectorService.getJobDirectorByTelephone(userPhoneNumber))
                         .filter(jd -> encoder.matches(userPassword, jd.getJd_password()))
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "电话号和密码错误"));

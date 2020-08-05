@@ -26,7 +26,7 @@ public class Student {
     private String s_id_card;
 
     @NotNull
-    private EumnWarehouse.S_SEX s_sex;
+    private EnumWarehouse.S_SEX s_sex;
 
     @NotNull
     @Column(length = 20)
@@ -37,7 +37,7 @@ public class Student {
     private String s_college;
 
     @NotNull
-    private EumnWarehouse.C_LEVEL s_c_level;
+    private EnumWarehouse.C_LEVEL s_c_level;
 
     @ManyToOne
     @NotNull
@@ -45,7 +45,7 @@ public class Student {
     private Profession s_profession;
 
     @NotNull
-    private EumnWarehouse.E_HISTORY s_e_history;
+    private EnumWarehouse.E_HISTORY s_e_history;
 
     @NotNull
     @Column(length = 20)
@@ -59,7 +59,7 @@ public class Student {
     private int s_f_language;
 
     @NotNull
-    private EumnWarehouse.S_RANGE s_s_range;
+    private EnumWarehouse.S_RANGE s_s_range;
 
     @ManyToOne
     @NotNull
@@ -67,7 +67,7 @@ public class Student {
     private Position s_e_position;
 
     @NotNull
-    private EumnWarehouse.E_CITY s_e_city;
+    private EnumWarehouse.E_CITY s_e_city;
 
     @NotNull
     @Column(length = 20)
@@ -85,7 +85,7 @@ public class Student {
     private String s_s_attachment;
 
     @NotNull
-    private EumnWarehouse.IF_WORK s_if_work;
+    private EnumWarehouse.IF_WORK s_if_work;
 
     @Column(length = 20)
     private String s_w_city;

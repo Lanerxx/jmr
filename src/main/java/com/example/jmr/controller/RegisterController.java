@@ -77,7 +77,7 @@ public class RegisterController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "您还有未填写的必填信息！");
         }
-        if (student.getS_if_work().equals(EumnWarehouse.IF_WORK.已就业)){
+        if (student.getS_if_work().equals(EnumWarehouse.IF_WORK.已就业)){
             if (student.getS_w_city() == null || student.getS_company() == null){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "您还未填写已就业的城市或企业！");
@@ -117,7 +117,7 @@ public class RegisterController {
         s.setS_telephone(student.getS_telephone());
         s.setS_email(student.getS_email());
         s.setS_if_work(student.getS_if_work());
-        if (student.getS_if_work().equals(EumnWarehouse.IF_WORK.已就业)){
+        if (student.getS_if_work().equals(EnumWarehouse.IF_WORK.已就业)){
             s.setS_w_city(student.getS_w_city());
             s.setS_company(student.getS_company());
         }

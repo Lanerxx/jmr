@@ -1,6 +1,6 @@
 package com.example.jmr.entity;
 
-public class EumnWarehouse {
+public class EnumWarehouse {
     public enum S_SEX {
         男, 女
     }

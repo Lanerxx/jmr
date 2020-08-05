@@ -1,5 +1,6 @@
 package com.example.jmr.service;
 
+import com.example.jmr.component.EnumComponent;
 import com.example.jmr.entity.*;
 import com.example.jmr.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +24,10 @@ public class StudentService {
     private JobRepository jobRepository;
     @Autowired
     private JmrBaseRepository jmrBaseRepository;
-
-    private final static int EUMN_S_SEX_LENGTH = EumnWarehouse.S_SEX.values().length;
-    private final static int EUMN_J_SEX_LENGTH = EumnWarehouse.J_SEX.values().length;
-    private final static int EUMN_LEVEL_LENGTH = EumnWarehouse.C_LEVEL.values().length;
-    private final static int EUMN_HISTORY_LENGTH = EumnWarehouse.E_HISTORY.values().length;
-    private final static int EUMN_LANGUAGE_LENGTH = EumnWarehouse.F_LANGUAGE.values().length;
-    private final static int EUMN_RANG_LENGTH = EumnWarehouse.S_RANGE.values().length;
-    private final static int EUMN_CITY_LENGTH = EumnWarehouse.E_CITY.values().length;
-
+    @Autowired
+    private CompanyJobRepository companyJobRepository;
+    @Autowired
+    private EnumComponent enumComponent;
 
     /*--------------学生信息（Student）---------------
     -------检索：管理员，学生，就业专员
@@ -67,9 +63,9 @@ public class StudentService {
 
     /*---------学生匹配的企业信息的各项数值（JmrBase）---------
     -------检索：管理员，学生，就业专员
-    -------更新：数据库
-    -------创建：数据库
-    -------删除：
+    -------更新：服务器
+    -------创建：服务器
+    -------删除：服务器
     --------------------------------------------------*/
     public Jmr_base addJmrBase(Jmr_base jmr_base){
         jmrBaseRepository.save(jmr_base);
@@ -78,149 +74,38 @@ public class StudentService {
 
     /*---------学生匹配的企业信息（JobMatchResult）---------
     -------检索：管理员，学生，就业专员
-    -------更新：数据库
-    -------创建：数据库
-    -------删除：
+    -------更新：服务器
+    -------创建：服务器
+    -------删除：服务器
     --------------------------------------------------*/
     public Job_match_result addJobMatchResult(Job_match_result job_match_result){
         jobMatchResultRepository.save(job_match_result);
         return job_match_result;
     }
 
-    //验证性别是否符合要求
-    //性别与要求一致或性别要求为无
-    public boolean verifySex(EumnWarehouse.S_SEX studentSex,EumnWarehouse.J_SEX jobSex){
-        boolean qualified = false;
-        if (jobSex == EumnWarehouse.J_SEX.无要求 ||
-                (jobSex ==  EumnWarehouse.J_SEX.男 && studentSex == EumnWarehouse.S_SEX.男) ||
-                (jobSex ==  EumnWarehouse.J_SEX.女 && studentSex == EumnWarehouse.S_SEX.女))
-            qualified = true;
-        return qualified;
-    }
-
-    //验证性学校等级是否符合要求
-    public int getSchoolLevelIndex(EumnWarehouse.C_LEVEL level){
-        EumnWarehouse.C_LEVEL[] levels = EumnWarehouse.C_LEVEL.values();
-        int index = EUMN_LEVEL_LENGTH;
-        for(int i = 0;i < EUMN_LEVEL_LENGTH ; i++) {
-            if (levels[i] == level) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-    public boolean verifySchoolLevel(EumnWarehouse.C_LEVEL studentLevel, EumnWarehouse.C_LEVEL jobLevel){
-        boolean qualified = false;
-        if (getSchoolLevelIndex(studentLevel) <= getSchoolLevelIndex(jobLevel) ) qualified = true;
-        return qualified;
-    }
-
-    //验证性学历等级是否符合要求
-    public int getHistoryIndex(EumnWarehouse.E_HISTORY history){
-        EumnWarehouse.E_HISTORY[] histories = EumnWarehouse.E_HISTORY.values();
-        int index = EUMN_HISTORY_LENGTH;
-        for(int i = 0;i < EUMN_HISTORY_LENGTH ; i++) {
-            if (histories[i] == history){
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-    public boolean verifyHistory(EumnWarehouse.E_HISTORY studentHistory,EumnWarehouse.E_HISTORY jobHistory){
-        boolean qualified = false;
-        if (getHistoryIndex(studentHistory) <= getHistoryIndex(jobHistory) ) qualified = true;
-        return qualified;
-    }
-
-    //验证性外语等级是否符合要求
-    public boolean verifyLanguage(int studentLanguage, int jobLanguage){
-        boolean q = false;
-        int i;
-
-        String studentLanguageString = Integer.toBinaryString(studentLanguage);
-        int studentLanguageN = studentLanguageString.length();
-
-        String jobLanguageString = Integer.toBinaryString(jobLanguage);
-        int jobLanguageN = jobLanguageString.length();
-
-        //若job要求为"无条件"，则jobLanguage = 16，转为二进制后，长度为5，则符合条件
-        //若job外语要求转为二进制后的长度 > 学生外语水平转为二进制后的长度，则不符合条件
-        if (jobLanguageN == 5){
-            q = true;
-        }
-        else if (jobLanguageN <= studentLanguageN){
-            q =true;
-            int diff = studentLanguageN - jobLanguageN;
-            for ( i = jobLanguageN - 1; i >= 0 ; i--){
-                if (jobLanguageString.substring(i, i + 1 ).equals("1") && !studentLanguageString.substring(i+diff, i+1+diff ).equals("1")){
-                    q = false;
-                    break;
-                }
-            }
-        }
-        return q;
-    }
-
-    //验证性期望薪资是否符合要求
-    public int getRangeIndex(EumnWarehouse.S_RANGE range){
-        EumnWarehouse.S_RANGE[] ranges = EumnWarehouse.S_RANGE.values();
-        int index = EUMN_RANG_LENGTH;
-        for(int i = 0;i < EUMN_RANG_LENGTH ; i++) {
-            if (ranges[i] == range){
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-    public boolean verifyRange(EumnWarehouse.S_RANGE studentRange,EumnWarehouse.S_RANGE jobRange){
-        boolean qualified = false;
-        if (getRangeIndex(studentRange) <= getRangeIndex(jobRange) ) {
-            qualified = true;
-        }
-        return qualified;
-    }
-
-    //验证性就业意向地是否符合要求
-    public int getCityIndex(EumnWarehouse.E_CITY city){
-        EumnWarehouse.E_CITY[] cities = EumnWarehouse.E_CITY.values();
-        int index = EUMN_CITY_LENGTH;
-        for(int i = 0;i < EUMN_CITY_LENGTH ; i++) {
-            if (cities[i] == city){
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-    public boolean verifyCity(EumnWarehouse.E_CITY studentCity,EumnWarehouse.E_CITY jobCity){
-        boolean qualified = false;
-        if (getCityIndex(studentCity) <= getCityIndex(jobCity) ) qualified = true;
-        return qualified;
-    }
-
-    //定时执行，匹配每一个岗位相对于每位一学生的条件符合值
+    //定时执行，匹配每一个岗位相对于每位学生的条件符合值
     public void getJobMatchResult(){
         jobMatchResultRepository.deleteAll();
         jmrBaseRepository.deleteAll();
 
-        List<Job> jobs = jobRepository.findAll();
-        // 1.获取所有学生，并遍历
-        List<Student> students = studentRepository.findAll();
-        students.forEach(student -> {
-            EumnWarehouse.S_SEX studentSex = student.getS_sex();
-            EumnWarehouse.C_LEVEL studentLevel = student.getS_c_level();
+        //获取企业已发布的岗位
+        List<Company_job> companyJobs = companyJobRepository.findAll();
+        // 1.获取所有已发布简历的学生，并遍历
+        List<Student_Resume> studentResumes = studentResumeRepository.findAll();
+        studentResumes.forEach(studentResume -> {
+            Student student = studentResume.getStudent_resume_pk().getStudent();
+            EnumWarehouse.S_SEX studentSex = student.getS_sex();
+            EnumWarehouse.C_LEVEL studentLevel = student.getS_c_level();
             int studentProfessionId = student.getS_profession().getP_id();
-            EumnWarehouse.E_HISTORY studentHistory = student.getS_e_history();
+            EnumWarehouse.E_HISTORY studentHistory = student.getS_e_history();
             int studentLanguages = student.getS_f_language();
-            EumnWarehouse.S_RANGE studentRange = student.getS_s_range();
+            EnumWarehouse.S_RANGE studentRange = student.getS_s_range();
             int studentPositionId = student.getS_e_position().getP_id();
-            EumnWarehouse.E_CITY studentCity = student.getS_e_city();
+            EnumWarehouse.E_CITY studentCity = student.getS_e_city();
 
             // 2.计算每一个岗位相对于某位一学生的条件符合值
-            jobs.forEach(job -> {
+            companyJobs.forEach(companyJob -> {
+                Job job = companyJob.getCompany_job_pk().getJob();
                 Job_match_result job_match_result = new Job_match_result();
                 Jmr_base jmr_base = new Jmr_base();
                 Company company = job.getJ_company();
@@ -231,22 +116,22 @@ public class StudentService {
                 job_match_result.setJmr_job(job);
                 job_match_result.setJmr_value(value);
 
-                EumnWarehouse.J_SEX jobSex = job.getJ_sex();
-                EumnWarehouse.C_LEVEL jobLevel = job.getJ_c_level();
+                EnumWarehouse.J_SEX jobSex = job.getJ_sex();
+                EnumWarehouse.C_LEVEL jobLevel = job.getJ_c_level();
                 int jobProfessionId = job.getJ_profession().getP_id();
-                EumnWarehouse.E_HISTORY jobHistory = job.getJ_e_history();
+                EnumWarehouse.E_HISTORY jobHistory = job.getJ_e_history();
                 int jobLanguages = job.getJ_f_language();
-                EumnWarehouse.S_RANGE jobRange = job.getJ_s_range();
+                EnumWarehouse.S_RANGE jobRange = job.getJ_s_range();
                 int jobPositionId = job.getJ_position().getP_id();
-                EumnWarehouse.E_CITY jobCity = job.getJ_e_city();
+                EnumWarehouse.E_CITY jobCity = job.getJ_e_city();
                 //3.分别计算8项待匹配项
                 //3.1 性别
-                if (verifySex(studentSex, jobSex)) {
+                if (enumComponent.verifySex(studentSex, jobSex)) {
                     jmr_base.setJmr_sex_value(1);
                     value = value + 1;
                 }
                 //3.2 学校层次
-                if (verifySchoolLevel(studentLevel, jobLevel)) {
+                if (enumComponent.verifySchoolLevel(studentLevel, jobLevel)) {
                     jmr_base.setJmr_level_value(1);
                     value = value + 1;
                 }
@@ -256,17 +141,17 @@ public class StudentService {
                     value = value + 1;
                 }
                 //3.4 学历
-                if (verifyHistory(studentHistory, jobHistory)){
+                if (enumComponent.verifyHistory(studentHistory, jobHistory)){
                     jmr_base.setJmr_history_value(1);
                     value = value + 1;
                 }
                 //3.5 外语水平
-                if (verifyLanguage(studentLanguages, jobLanguages)){
+                if (enumComponent.verifyLanguage(studentLanguages, jobLanguages)){
                     jmr_base.setJmr_language_value(1);
                     value = value + 1;
                 }
                 //3.6 期望薪资
-                if (verifyRange(studentRange, jobRange)){
+                if (enumComponent.verifyRange(studentRange, jobRange)){
                     jmr_base.setJmr_range_value(1);
                     value = value + 1;
                 };
@@ -276,13 +161,12 @@ public class StudentService {
                     value = value + 1;
                 }
                 //3.8 就业意向地
-                if (verifyCity(studentCity, jobCity)){
+                if (enumComponent.verifyCity(studentCity, jobCity)){
                     jmr_base.setJmr_city_value(1);
                     value = value + 1;
                 }
                 //4.若匹配两项以上则存入数据库
                 if (value >=2){
-                    log.debug("{}",value);
                     job_match_result.setJmr_value(value);
                     jmrBaseRepository.save(jmr_base);
                     job_match_result.setJmr_base(jmr_base);

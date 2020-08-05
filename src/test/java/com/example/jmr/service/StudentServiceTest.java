@@ -68,7 +68,7 @@ public class StudentServiceTest {
     }
 
     @Test
-    public void getStudentMatchResultTest(){
+    public void getJobMatchResultTest(){
         studentService.getJobMatchResult();
         List<Job_match_result> job_match_results = jobMatchResultRepository.findAll();
         job_match_results.forEach(job_match_result -> {
@@ -76,4 +76,6 @@ public class StudentServiceTest {
                     job_match_result.getJmr_company().getC_name());
         });
     }
+
+
 }

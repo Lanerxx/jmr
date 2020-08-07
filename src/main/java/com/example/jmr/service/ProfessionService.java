@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 @Transactional
@@ -24,7 +27,29 @@ public class ProfessionService {
         professtionRepository.save(profession);
         return profession;
     }
+    public List<Profession> addProfessions(List<Profession> professions){
+        return null;
+    }
+    public void deleteProfession(int pid){
+        professtionRepository.deleteById(pid);
+    }
+    public void deleteAllProfessions(){
+        professtionRepository.deleteAll();
+    }
+    public Profession updateProfession(Profession profession){
+        professtionRepository.save(profession);
+        return profession;
+    }
+    public List<Profession> getAllProfessions(){
+        return professtionRepository.findAll();
+    }
+    public Profession getProfession(int pid){
+        return professtionRepository.findById(pid).orElse(null);
+    }
     public Profession getProfessionBySClass(String sClass){
         return professtionRepository.getProfessionByP_s_class(sClass).orElse(null);
+    }
+    public List<Profession> getProfessionsByMClass(String mClass){
+        return professtionRepository.getProfessionByP_m_class(mClass).orElse(new ArrayList<>());
     }
 }

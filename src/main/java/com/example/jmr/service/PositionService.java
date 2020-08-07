@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @Transactional
@@ -23,6 +25,25 @@ public class PositionService {
     public Position addPosition(Position position){
         positionRepository.save(position);
         return position;
+    }
+    public List<Position> addPositions(List<Position> positions){
+        return null;
+    }
+    public void deletePosition(int pid){
+        positionRepository.deleteById(pid);
+    }
+    public void deleteAllPositions(){
+        positionRepository.deleteAll();
+    }
+    public Position updatePosition(Position position){
+        positionRepository.save(position);
+        return position;
+    }
+    public List<Position> getAllPositions(){
+        return positionRepository.findAll();
+    }
+    public Position getPosition(int pid){
+        return positionRepository.findById(pid).orElse(null);
     }
     public Position getPosition(String name){
         return positionRepository.getPositionByP_name(name).orElse(null);

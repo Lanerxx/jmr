@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Slf4j
 @Transactional
@@ -24,8 +27,28 @@ public class JobDirectorService {
         jobDirectorRepository.save(job_director);
         return job_director;
     }
+    public void deleteJobDirector(int jbid){
+        jobDirectorRepository.deleteById(jbid);
+    }
+    public void deleteAllJobDirectors(){
+        jobDirectorRepository.deleteAll();
+    }
+    public Job_director updateJobDirector(Job_director job_director){
+        jobDirectorRepository.save(job_director);
+        return job_director;
+    }
+    public List<Job_director> getAllJobDirectors(){
+        return jobDirectorRepository.findAll();
+    }
+    public Job_director getJobDirector(int jdid){
+        return jobDirectorRepository.findById(jdid).orElse(null);
+    }
+    public List<Job_director> getJobDirectorsByName(String name){
+        return jobDirectorRepository.getJobDirectorByJd_name(name).orElse(new ArrayList<>());
+    }
     public Job_director getJobDirectorByTelephone(String telephone){
         return jobDirectorRepository.getJobDirectorByJd_telephone(telephone).orElse(null);
     }
+
 
 }

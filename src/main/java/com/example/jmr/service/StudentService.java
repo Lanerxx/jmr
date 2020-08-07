@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,6 +19,8 @@ public class StudentService {
     private StudentRepository studentRepository;
     @Autowired
     private StudentResumeRepository studentResumeRepository;
+    @Autowired
+    private ResumeRepository resumeRepository;
     @Autowired
     private JobMatchResultRepository jobMatchResultRepository;
     @Autowired
@@ -39,6 +42,31 @@ public class StudentService {
         studentRepository.save(student);
         return student;
     }
+    public List<Student> addStudents(List<Student> students){
+        return null;
+    }
+    public void deleteStudent(int sid){
+        studentRepository.deleteById(sid);
+    }
+    public void deleteAllStudents(){
+        studentRepository.deleteAll();
+    }
+    public Student updateStudent(Student student){
+        studentRepository.save(student);
+        return student;
+    }
+    public List<Student> getAllStudents(){
+        return studentRepository.findAll();
+    }
+    public Student getStudent(int sid){
+        return studentRepository.findById(sid).orElse(null);
+    }
+    public List<Student> getStudentsByName(String name){
+        return studentRepository.getStudentByS_name(name).orElse(new ArrayList<>());
+    }
+    public List<Student> getStudentByCollege(String college){
+        return studentRepository.getStudentByS_college(college).orElse(new ArrayList<>());
+    }
     public Student getStudentByTelephone(String telephone){
         return studentRepository.getStudentByS_telephone(telephone).orElse(null);
     }
@@ -49,6 +77,26 @@ public class StudentService {
     -------创建：学生
     -------删除：学生
     --------------------------------------------------*/
+    public Resume addResume(Resume resume){
+        resumeRepository.save(resume);
+        return resume;
+    }
+    public void deleteResume(int rid){
+        resumeRepository.deleteById(rid);
+    }
+    public void deleteAllResumes(){
+        resumeRepository.deleteAll();
+    }
+    public Resume updateResume(Resume resume){
+        resumeRepository.save(resume);
+        return resume;
+    }
+    public List<Resume> getResumesByStudentId(int sid){
+        return resumeRepository.getResumesByR_student(sid).orElse(new ArrayList<>());
+    }
+    public Resume getResume(int rid){
+        return resumeRepository.findById(rid).orElse(null);
+    }
 
     /*--------学生已发布简历信息（StudentResume）----------
     -------检索：管理员，学生，就业专员
@@ -59,6 +107,15 @@ public class StudentService {
     public Student_Resume addStudentResume(Student_Resume student_resume){
         studentResumeRepository.save(student_resume);
         return student_resume;
+    }
+    public void deleteStudentResume(int srid){
+        studentResumeRepository.deleteById(srid);
+    }
+    public List<Student_Resume> getStudentResumes(int sid){
+        return studentResumeRepository.getStudentResumesByStudent(sid).orElse(new ArrayList<>());
+    }
+    public List<Student_Resume> getAllStudentResumes(){
+        return studentResumeRepository.findAll();
     }
 
     /*---------学生匹配的企业信息的各项数值（JmrBase）---------
@@ -81,6 +138,9 @@ public class StudentService {
     public Job_match_result addJobMatchResult(Job_match_result job_match_result){
         jobMatchResultRepository.save(job_match_result);
         return job_match_result;
+    }
+    public List<Job_match_result> getAllJobMatchResults(){
+        return jobMatchResultRepository.findAll();
     }
 
     //定时执行，匹配每一个岗位相对于每位学生的条件符合值

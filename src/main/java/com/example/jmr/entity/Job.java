@@ -10,8 +10,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class Job {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int j_id;

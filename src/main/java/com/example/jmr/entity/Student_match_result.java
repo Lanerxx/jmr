@@ -21,6 +21,11 @@ public class Student_match_result {
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "smr_j_id")
+    private Job smr_job;
+
+    @NotNull
+    @ManyToOne
     @JoinColumn(name = "smr_s_id")
     private Student smr_student;
 

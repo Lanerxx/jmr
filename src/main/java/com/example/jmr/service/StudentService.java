@@ -139,6 +139,9 @@ public class StudentService {
         jobMatchResultRepository.save(job_match_result);
         return job_match_result;
     }
+    public void deleteStudentMatchResultByCompanyAndJob(int cid,int jid){
+        jobMatchResultRepository.deleteJob_match_resultsByCompanyAndJob(cid, jid);
+    }
     public List<Job_match_result> getAllJobMatchResults(){
         return jobMatchResultRepository.findAll();
     }

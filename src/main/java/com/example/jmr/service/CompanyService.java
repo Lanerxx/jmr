@@ -1,6 +1,7 @@
 package com.example.jmr.service;
 
 import com.example.jmr.component.EnumComponent;
+import com.example.jmr.component.vo.CompanyJobVo;
 import com.example.jmr.entity.*;
 import com.example.jmr.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import java.util.List;
 public class CompanyService {
     @Autowired
     private CompanyRepository companyRepository;
+    @Autowired
+    private CompanyService companyService;
     @Autowired
     private JobRepository jobRepository;
     @Autowired
@@ -65,6 +68,9 @@ public class CompanyService {
     public Company getCompanyByTelephone(String telephone){
         return companyRepository.getCompanyByC_telephone(telephone).orElse(null);
     }
+    public Company getCompany(int cid){
+        return companyRepository.findById(cid).orElse(null);
+    }
 
     /*-----------------职位信息（Job）-------------------
     -------检索：公司
@@ -103,8 +109,8 @@ public class CompanyService {
         companyJobRepository.save(company_job);
         return company_job;
     }
-    public void deleteCompanyJob(int cjid){
-        companyJobRepository.deleteById(cjid);
+    public void deleteCompanyJob(int cid,int jid){
+        companyJobRepository.deleteCompany_jobByCompanyAndJob(cid,jid);
     }
     public void deleteAllCompanyJobs(){
         companyJobRepository.deleteAll();
@@ -115,8 +121,29 @@ public class CompanyService {
     public List<Company_job> getCompanyJobs(String positionName){
         return companyJobRepository.getCompany_jobsByPositionName(positionName).orElse(new ArrayList<>());
     }
-    public List<Company_job> getCompanyJobs(int cid){
+    public List<Company_job> getCompanyJobsByCompany(int cid){
         return companyJobRepository.getCompany_jobsByCompany(cid).orElse(new ArrayList<>());
+    }
+    public List<CompanyJobVo> getCompanyJobsVoByCompany(int cid){
+        List<Job> jobs = companyService.getJobsByCompany(cid);
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(cid);
+        List<CompanyJobVo> companyJobVos = new ArrayList<>();
+        jobs.forEach(job -> {
+            companyJobs.forEach(companyJob -> {
+                if (companyJob.getCompany_job_pk().getJob().getJ_id() ==
+                        job.getJ_id()){
+                    CompanyJobVo companyJobVo = new CompanyJobVo();
+                    companyJobVo.setJob(job);
+                    companyJobVo.setCj_focus(companyJob.getCj_focus());
+                    companyJobVo.setPosted(true);
+                    companyJobVos.add(companyJobVo);
+                }
+            });
+        });
+        return companyJobVos;
+    }
+    public Company_job getCompanyJobByCompanyAndJob(int cid, int jid){
+        return companyJobRepository.getCompany_jobByCompanyAndJob(cid, jid).orElse(null);
     }
 
     /*---------企业匹配的学生信息的各项数值（JmrBase）---------
@@ -140,8 +167,14 @@ public class CompanyService {
         studentMatchResultRepository.save(student_match_result);
         return student_match_result;
     }
+    public void deleteStudentMatchResultByCompanyAndJob(int cid,int jid){
+        studentMatchResultRepository.deleteStudent_match_resultsByCompanyAndJob(cid, jid);
+    }
     public List<Student_match_result> getAllStudentMatchResult(){
         return studentMatchResultRepository.findAll();
+    }
+    public List<Student_match_result> getStudentMatchResultByJob(int jid){
+        return studentMatchResultRepository.getStudent_match_resultsByJob(jid).orElse(new ArrayList<>());
     }
 
     //定时执行，匹配每一个学生相对于每个岗位的条件符合值
@@ -178,6 +211,7 @@ public class CompanyService {
                 student_match_result.setSmr_company(company);
                 student_match_result.setSmr_resume(resume);
                 student_match_result.setSmr_value(value);
+                student_match_result.setSmr_job(job);
 
                 EnumWarehouse.S_SEX studentSex = student.getS_sex();
                 EnumWarehouse.C_LEVEL studentLevel = student.getS_c_level();

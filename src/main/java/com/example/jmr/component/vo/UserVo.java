@@ -2,7 +2,6 @@ package com.example.jmr.component.vo;
 
 import lombok.Data;
 
-import javax.persistence.Column;
 
 @Data
 public class UserVo {

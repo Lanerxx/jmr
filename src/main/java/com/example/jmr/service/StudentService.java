@@ -108,8 +108,11 @@ public class StudentService {
         studentResumeRepository.save(student_resume);
         return student_resume;
     }
-    public void deleteStudentResume(int srid){
-        studentResumeRepository.deleteById(srid);
+    public void deleteStudentResume(int sid,int rid){
+        studentResumeRepository.deleteStudent_resultsByStudentAndResume(sid, rid);
+    }
+    public Student_Resume getStudentResumeByStudentAndResume(int sid,int rid){
+        return studentResumeRepository.getStudent_ResumeByStudentAndResume(sid, rid).orElse(null);
     }
     public List<Student_Resume> getStudentResumes(int sid){
         return studentResumeRepository.getStudentResumesByStudent(sid).orElse(new ArrayList<>());
@@ -145,7 +148,9 @@ public class StudentService {
     public List<Job_match_result> getAllJobMatchResults(){
         return jobMatchResultRepository.findAll();
     }
-
+    public List<Job_match_result> getJobMatchResultsByStudent(int sid){
+        return jobMatchResultRepository.getJob_match_resultsByStudent(sid).orElse(new ArrayList<>());
+    }
     //定时执行，匹配每一个岗位相对于每位学生的条件符合值
     public void getJobMatchResult(){
         jobMatchResultRepository.deleteAll();

@@ -170,6 +170,9 @@ public class CompanyService {
     public void deleteStudentMatchResultByCompanyAndJob(int cid,int jid){
         studentMatchResultRepository.deleteStudent_match_resultsByCompanyAndJob(cid, jid);
     }
+    public void deleteStudentMatchResultByStudentAndResume(int sid,int rid){
+        studentMatchResultRepository.deleteStudent_match_resultsByStudentAndResume(sid, rid);
+    }
     public List<Student_match_result> getAllStudentMatchResult(){
         return studentMatchResultRepository.findAll();
     }

@@ -1,6 +1,8 @@
 package com.example.jmr.service;
 
 import com.example.jmr.component.EnumComponent;
+import com.example.jmr.component.vo.CompanyJobVo;
+import com.example.jmr.component.vo.StudentResumeVo;
 import com.example.jmr.entity.*;
 import com.example.jmr.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,8 @@ public class StudentService {
     private JmrBaseRepository jmrBaseRepository;
     @Autowired
     private CompanyJobRepository companyJobRepository;
+    @Autowired
+    private StudentService studentService;
     @Autowired
     private EnumComponent enumComponent;
 
@@ -119,6 +123,23 @@ public class StudentService {
     }
     public List<Student_Resume> getAllStudentResumes(){
         return studentResumeRepository.findAll();
+    }
+    public List<StudentResumeVo> getStudentResumeVoByStudent(int sid){
+        List<Resume> resumes = studentService.getResumesByStudentId(sid);
+        List<Student_Resume> student_resumes = studentService.getStudentResumes(sid);
+        List<StudentResumeVo> studentResumeVos = new ArrayList<>();
+        resumes.forEach(resume -> {
+            student_resumes.forEach(student_resume -> {
+                if (student_resume.getStudent_resume_pk().getResume().getR_id() ==
+                        resume.getR_id()){
+                    StudentResumeVo studentResumeVo = new StudentResumeVo();
+                    studentResumeVo.setPosted(true);
+                    studentResumeVo.setResume(resume);
+                    studentResumeVos.add(studentResumeVo);
+                }
+            });
+        });
+        return studentResumeVos;
     }
 
     /*---------学生匹配的企业信息的各项数值（JmrBase）---------

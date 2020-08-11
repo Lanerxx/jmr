@@ -3,6 +3,7 @@ package com.example.jmr.controller;
 import com.example.jmr.component.CheckIsNullComponent;
 import com.example.jmr.component.RequestComponent;
 import com.example.jmr.component.vo.CompanyJobVo;
+import com.example.jmr.component.vo.StudentResumeVo;
 import com.example.jmr.entity.*;
 import com.example.jmr.service.CompanyService;
 import com.example.jmr.service.PositionService;
@@ -45,11 +46,11 @@ public class StudentController {
 
     @GetMapping("resumes")
     public Map getResumes(){
-//        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
+        List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(requestComponent.getUid());
         List<Position> positions = positionService.getAllPositions();
         List<Profession> professions = professionService.getAllProfessions();
         return Map.of(
-//                "companyJobVos",companyJobVos,
+                "studentResumeVos",studentResumeVos,
                 "positions",positions,
                 "professions",professions
         );
@@ -65,9 +66,9 @@ public class StudentController {
                     "您还有未填写的信息，请完善信息后再提交");
         }
         studentService.addResume(resume);
-        List<Resume> resumes = studentService.getResumesByStudentId(sid);
+        List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(sid);
         return Map.of(
-                "resumes",resumes
+                "studentResumeVos",studentResumeVos
         );
     }
 
@@ -81,9 +82,9 @@ public class StudentController {
         companyService.deleteStudentMatchResultByStudentAndResume(sid, rid);
         studentService.deleteStudentResume(sid, rid);
         studentService.deleteResume(rid);
-        List<Resume> resumes = studentService.getResumesByStudentId(sid);
+        List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(sid);
         return Map.of(
-                "resumes",resumes
+                "studentResumeVos",studentResumeVos
         );
     }
 
@@ -94,9 +95,9 @@ public class StudentController {
                     "您还有未填写的信息，请完善信息后再提交");
         }
         studentService.updateResume(resume);
-        List<Resume> resumes = studentService.getResumesByStudentId(requestComponent.getUid());
+        List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(requestComponent.getUid());
         return Map.of(
-                "resumes",resumes
+                "studentResumeVos",studentResumeVos
         );
     }
 
@@ -107,9 +108,9 @@ public class StudentController {
                     "您还有未填写的信息，请完善信息后再提交");
         }
         studentService.addStudentResume(student_resume);
-        List<Resume> resumes = studentService.getResumesByStudentId(requestComponent.getUid());
+        List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(requestComponent.getUid());
         return Map.of(
-                "resumes",resumes
+                "studentResumeVos",studentResumeVos
         );
     }
 
@@ -122,9 +123,9 @@ public class StudentController {
 
         companyService.deleteStudentMatchResultByStudentAndResume(sid, rid);
         studentService.deleteStudentResume(sid, rid);
-        List<Resume> resumes = studentService.getResumesByStudentId(sid);
+        List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(sid);
         return Map.of(
-                "resumes",resumes
+                "studentResumeVos",studentResumeVos
         );
     }
 

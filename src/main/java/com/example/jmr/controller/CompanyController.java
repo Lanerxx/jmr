@@ -137,5 +137,13 @@ public class CompanyController {
         );
     }
 
+    @PostMapping("smr/{jid}")
+    public Map getJmr(@PathVariable int jid,@RequestBody Map<String,Integer> focus){
+        List<Student_match_result> studentMatchResults = companyService.getStudentMatchResult(focus, jid);
+        return Map.of(
+                "studentMatchResults", studentMatchResults
+        );
+    }
+
 
 }

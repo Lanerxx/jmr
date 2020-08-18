@@ -137,4 +137,12 @@ public class StudentController {
         );
     }
 
+    @PostMapping("jmr")
+    public Map getJmr(@RequestBody Map<String,Integer> focus){
+        List<Job_match_result> jobMatchResults = studentService.getJobMatchResult(focus, requestComponent.getUid());
+        return Map.of(
+                "jobMatchResults", jobMatchResults
+        );
+    }
+
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
@@ -172,6 +173,7 @@ public class StudentService {
     public List<Job_match_result> getJobMatchResultsByStudent(int sid){
         return jobMatchResultRepository.getJob_match_resultsByStudent(sid).orElse(new ArrayList<>());
     }
+
     //定时执行，匹配每一个岗位相对于每位学生的条件符合值
     public void getJobMatchResult(){
         jobMatchResultRepository.deleteAll();
@@ -263,5 +265,61 @@ public class StudentService {
                 }
             });
         });
+    }
+
+    //及时执行，根据用户要求匹配学生
+    public List<Job_match_result> getJobMatchResult(Map<String,Integer> focus, int sid){
+        List<Job_match_result> jobMatchResults = studentService.getJobMatchResultsByStudent(sid);
+        List<Job_match_result> jobMatchResultsFocus = new ArrayList<>();
+        log.debug("{}", focus.toString());
+        jobMatchResults.forEach(jobMatchResult -> {
+            int value= 0;
+            Job_match_result jmr = new Job_match_result();
+            Jmr_base jb = jobMatchResult.getJmr_base();
+            if (focus.get("sex") == 1 && jb.getJmr_sex_value() == 1) {
+                value = value + 1;
+                log.debug("sex{}", value);
+
+            }
+            if (focus.get("level") == 1 && jb.getJmr_level_value() == 1){
+                value = value + 1;
+                log.debug("level{}", value);
+
+            }
+            if (focus.get("profession") == 1 && jb.getJmr_profession_value() == 1) {
+                value = value + 1;
+                log.debug("profession{}", value);
+
+            }
+            if (focus.get("history") == 1 && jb.getJmr_history_value() == 1){
+                value = value + 1;
+                log.debug("history{}", value);
+
+            }
+            if (focus.get("language") == 1 && jb.getJmr_language_value() == 1){
+                value = value + 1;
+                log.debug("language{}", value);
+
+            }
+            if (focus.get("range") == 1 && jb.getJmr_range_value() == 1){
+                value = value + 1;
+                log.debug("range{}", value);
+
+            }
+            if (focus.get("position") == 1 && jb.getJmr_position_value() == 1){
+                value = value + 1;
+                log.debug("position{}", value);
+
+            }
+            if (focus.get("city") == 1 && jb.getJmr_city_value() == 1){
+                value = value + 1;
+                log.debug("{}", value);
+
+            }
+            log.debug("{}", value);
+            jobMatchResult.setJmr_value(value);
+            jobMatchResultsFocus.add(jobMatchResult);
+        });
+        return jobMatchResultsFocus;
     }
 }

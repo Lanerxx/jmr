@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @Slf4j
@@ -74,6 +76,23 @@ public class StudentServiceTest {
         job_match_results.forEach(job_match_result -> {
             log.debug("{}/ {} ", job_match_result.getJmr_student().getS_name(),
                     job_match_result.getJmr_company().getC_name());
+        });
+    }
+
+    @Test
+    public void getJobMatchResultTestFocus(){
+        Map<String,Integer> focus = new HashMap<>();
+        focus.put("sex", 1);
+        focus.put("level", 1);
+        focus.put("profession", 1);
+        focus.put("history", 0);
+        focus.put("language", 0);
+        focus.put("range", 1);
+        focus.put("position", 1);
+        focus.put("city", 1);
+        List<Job_match_result> jobMatchResults = studentService.getJobMatchResult(focus, 38);
+        jobMatchResults.forEach(job_match_result -> {
+            log.debug("{} / {}", job_match_result.getJmr_student().getS_name(),job_match_result.getJmr_value());
         });
     }
 

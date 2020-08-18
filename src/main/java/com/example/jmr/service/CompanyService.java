@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -274,6 +275,54 @@ public class CompanyService {
                 }
             });
         });
+    }
+
+    //及时执行，根据用户要求匹配岗位
+    public List<Student_match_result> getStudentMatchResult(Map<String,Integer> focus, int jid){
+        List<Student_match_result> studentMatchResults = companyService.getStudentMatchResultByJob(jid);
+        List<Student_match_result> studentMatchResultsFocus = new ArrayList<>();
+        log.debug("{}", focus.toString());
+        studentMatchResults.forEach(studentMatchResult -> {
+            int value= 0;
+            Student_match_result smr = new Student_match_result();
+            Smr_base sb = studentMatchResult.getSmr_base();
+            if (focus.get("sex") == 1 && sb.getSmr_sex_value() == 1) {
+                value = value + 1;
+                log.debug("sex{}", value);
+            }
+            if (focus.get("level") == 1 && sb.getSmr_level_value() == 1){
+                value = value + 1;
+                log.debug("level{}", value);
+            }
+            if (focus.get("profession") == 1 && sb.getSmr_profession_value() == 1) {
+                value = value + 1;
+                log.debug("profession{}", value);
+            }
+            if (focus.get("history") == 1 && sb.getSmr_history_value() == 1){
+                value = value + 1;
+                log.debug("history{}", value);
+            }
+            if (focus.get("language") == 1 && sb.getSmr_language_value() == 1){
+                value = value + 1;
+                log.debug("language{}", value);
+            }
+            if (focus.get("range") == 1 && sb.getSmr_language_value() == 1){
+                value = value + 1;
+                log.debug("range{}", value);
+            }
+            if (focus.get("position") == 1 && sb.getSmr_position_value() == 1){
+                value = value + 1;
+                log.debug("position{}", value);
+            }
+            if (focus.get("city") == 1 && sb.getSmr_city_value() == 1){
+                value = value + 1;
+                log.debug("{}", value);
+            }
+            log.debug("{}", value);
+            studentMatchResult.setSmr_value(value);
+            studentMatchResultsFocus.add(studentMatchResult);
+        });
+        return studentMatchResultsFocus;
     }
 
 }

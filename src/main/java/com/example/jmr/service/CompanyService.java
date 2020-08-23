@@ -130,16 +130,20 @@ public class CompanyService {
         List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(cid);
         List<CompanyJobVo> companyJobVos = new ArrayList<>();
         jobs.forEach(job -> {
+            CompanyJobVo companyJobVo = new CompanyJobVo();
+            companyJobVo.setJob(job);
+            companyJobVo.setPosted(false);
             companyJobs.forEach(companyJob -> {
+                companyJobVo.setCj_focus(companyJob.getCj_focus());
                 if (companyJob.getCompany_job_pk().getJob().getJ_id() ==
                         job.getJ_id()){
-                    CompanyJobVo companyJobVo = new CompanyJobVo();
-                    companyJobVo.setJob(job);
-                    companyJobVo.setCj_focus(companyJob.getCj_focus());
                     companyJobVo.setPosted(true);
-                    companyJobVos.add(companyJobVo);
                 }
             });
+            companyJobVos.add(companyJobVo);
+        });
+        companyJobVos.forEach(companyJobVo -> {
+            log.debug("{},{}", companyJobVo.getJob().getJ_position().getP_name(),companyJobVo.isPosted());
         });
         return companyJobVos;
     }

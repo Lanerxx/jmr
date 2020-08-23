@@ -26,9 +26,6 @@ public class InitializingComponent implements InitializingBean {
             a.setA_name(name);
             String s = encoder.encode(password);
             a.setA_password(encoder.encode(password));
-            log.debug(s);
-            log.debug("{} / {}",s.length(),s.getClass());
-
             a.setA_type(Admin.A_TYPE.系统管理员);
             adminService.addAdmin(a);
         }

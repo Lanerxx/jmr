@@ -20,7 +20,7 @@ public class Resume {
 
     @NotNull
     @Column(length = 200)
-    private String r_skil;
+    private String r_skill;
 
     @NotNull
     @Column(length = 50)

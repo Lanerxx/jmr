@@ -43,7 +43,7 @@ public class RegisterController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "您还有未填写的必填信息！");
         }
-        if (studentService.getStudentByTelephone(company.getC_telephone())!=null){
+        if (companyService.getCompanyByTelephone(company.getC_telephone())!=null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "该手机号已注册！");
         }

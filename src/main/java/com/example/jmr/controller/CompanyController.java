@@ -44,6 +44,20 @@ public class CompanyController {
         );
     }
 
+    @PatchMapping("information")
+    public Map updateCompanyInformation(@RequestBody Company company){
+        Company c = companyService.getCompany(requestComponent.getUid());
+        c.setC_name(company.getC_name());
+        c.setC_s_code(company.getC_s_code());
+        c.setC_description(company.getC_description());
+        c.setC_contact(company.getC_contact());
+        c.setC_telephone(company.getC_telephone());
+        c.setC_email(company.getC_email());
+        companyService.updateCompany(c);
+        return Map.of(
+                "company",c
+        );
+    }
     @GetMapping("jobs")
     public Map getJobs(){
         log.debug("{}", requestComponent.getUid());
@@ -163,19 +177,15 @@ public class CompanyController {
 
     @GetMapping("smr/{cjid}")
     public Map getSmr(@PathVariable int cjid){
-        log.debug("111");
         Company_job company_job = companyService.getCompanyJobByCompanyAndJob(requestComponent.getUid(), cjid);
         if (company_job == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "您想匹配的岗位不存在或尚未发布");
         }
-        log.debug("222");
         List<Student_match_result> student_match_results = companyService.getStudentMatchResultByJob(cjid);
         if (student_match_results.size() == 0 ){
-            log.debug("333");
             companyService.getStudentMatchResultByJob(company_job, cjid);
             student_match_results = companyService.getStudentMatchResultByJob(cjid);
-            log.debug("444");
         }
         return Map.of(
                 "studentMatchResults", student_match_results

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,5 +48,13 @@ public class PositionService {
     }
     public Position getPosition(String name){
         return positionRepository.getPositionByP_name(name).orElse(null);
+    }
+    public List<String> listPositionsName(){
+        List<Position> positions = positionRepository.findAll();
+        List<String> positionsName = new ArrayList<>();
+        positions.forEach(position -> {
+            positionsName.add(position.getP_name());
+        });
+        return positionsName;
     }
 }

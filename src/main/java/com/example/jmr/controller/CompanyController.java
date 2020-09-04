@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/company/")
@@ -45,13 +46,14 @@ public class CompanyController {
 
     @GetMapping("jobs")
     public Map getJobs(){
-        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
-        List<Position> positions = positionService.getAllPositions();
-        List<Profession> professions = professionService.getAllProfessions();
+        log.debug("{}", requestComponent.getUid());
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
+        List<String> positionsName = positionService.listPositionsName();
+        Set<String> professionsMClass = professionService.getProfessionsMClass();
         return Map.of(
-                "companyJobVos",companyJobVos,
-                "positions",positions,
-                "professions",professions
+                "companyJobs",companyJobs,
+                "positions",positionsName,
+                "professionsMClass",professionsMClass
                 );
     }
 
@@ -60,14 +62,27 @@ public class CompanyController {
         int cid = requestComponent.getUid();
         Company company = companyService.getCompany(cid);
         job.setJ_company(company);
+        Position po = positionService.getPosition(job.getJ_position().getP_name());
+        List<Profession> prs = professionService.getProfessionsByMClass(job.getJ_profession().getP_m_class());
+        job.setJ_profession(prs.get(0));
+        job.setJ_position(po);
+        log.debug("{}", job.getJ_company().getC_name());
         if (checkIsNullComponent.objCheckIsNull(job)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "您还有未填写的信息，请完善信息后再提交");
         }
         companyService.addJob(job);
-        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
+        Company_job companyJob = new Company_job();
+        companyJob.setCj_focus(false);
+        Company_job_PK company_job_pk = new Company_job_PK();
+        company_job_pk.setCompany(company);
+        company_job_pk.setJob(job);
+        companyJob.setCompany_job_pk(company_job_pk);
+        log.debug("{}", companyJob.getCompany_job_pk());
+        companyService.addCompanyJob(companyJob);
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         return Map.of(
-                "companyJobVos",companyJobVos
+                "companyJobs",companyJobs
         );
     }
 
@@ -82,56 +97,86 @@ public class CompanyController {
         companyService.deleteStudentMatchResultByCompanyAndJob(cid, jid);
         companyService.deleteCompanyJob(cid,jid);
         companyService.deleteJob(jid);
-        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         return Map.of(
-                "companyJobVos",companyJobVos
+                "companyJobs",companyJobs
         );
     }
 
     @PatchMapping("job")
     public Map updateJob(@RequestBody Job job){
+        job.setJ_company(companyService.getCompany(requestComponent.getUid()));
+        Position po = positionService.getPosition(job.getJ_position().getP_name());
+        List<Profession> prs = professionService.getProfessionsByMClass(job.getJ_profession().getP_m_class());
+        job.setJ_profession(prs.get(0));
+        job.setJ_position(po);
         if (checkIsNullComponent.objCheckIsNull(job)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "您还有未填写的信息，请完善信息后再提交");
         }
         companyService.updateJob(job);
-        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         return Map.of(
-                "companyJobVos",companyJobVos
+                "companyJobs",companyJobs
         );
     }
 
     @PostMapping("companyJob")
     public Map addCompanyJob(@Valid @RequestBody Company_job companyJob){
-        if(checkIsNullComponent.objCheckIsNull(companyJob)){
+        int jid = companyJob.getCompany_job_pk().getJob().getJ_id();
+        Job job = companyService.getJob(jid);
+        if (job == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "您还有未填写的信息，请完善信息后再提交");
+                    "您想发布的岗位不存在");
         }
-        companyService.addCompanyJob(companyJob);
-        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
+        Company_job_PK companyJobPk = new Company_job_PK();
+        companyJobPk.setJob(companyService.getJob(jid));
+        companyJobPk.setCompany(companyService.getCompany(requestComponent.getUid()));
+
+        Company_job cj = new Company_job();
+        cj.setCompany_job_pk(companyJobPk);
+        cj.setCj_focus(companyJob.isCj_focus());
+        companyService.updateCompanyJob(cj);
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         return Map.of(
-                "companyJobVos",companyJobVos
+                "companyJobs",companyJobs
         );
     }
 
-    @DeleteMapping("companyJob/{cid}/{jid}")
-    public Map deleteCompanyJob(@PathVariable int cid,@PathVariable int jid){
+    @PatchMapping("companyJob/{jid}")
+    public Map updateCompanyJob(@PathVariable int jid){
+        int cid = requestComponent.getUid();
         if (companyService.getCompanyJobByCompanyAndJob(cid, jid)==null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "您想删除的已发布岗位不存在");
+                    "您想回收的岗位不存在");
         }
         studentService.deleteStudentMatchResultByCompanyAndJob(cid, jid);
         companyService.deleteStudentMatchResultByCompanyAndJob(cid, jid);
-        companyService.deleteCompanyJob(cid,jid);
-        List<CompanyJobVo> companyJobVos = companyService.getCompanyJobsVoByCompany(requestComponent.getUid());
+        Company_job companyJob = companyService.getCompanyJobByCompanyAndJob(cid, jid);
+        companyJob.setCj_focus(false);
+        companyService.updateCompanyJob(companyJob);
+        List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         return Map.of(
-                "companyJobVos",companyJobVos
+                "companyJobs",companyJobs
         );
     }
 
-    @GetMapping("smr/{jid}")
-    public Map getSmr(@PathVariable int jid){
-        List<Student_match_result> student_match_results = companyService.getStudentMatchResultByJob(jid);
+    @GetMapping("smr/{cjid}")
+    public Map getSmr(@PathVariable int cjid){
+        log.debug("111");
+        Company_job company_job = companyService.getCompanyJobByCompanyAndJob(requestComponent.getUid(), cjid);
+        if (company_job == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "您想匹配的岗位不存在或尚未发布");
+        }
+        log.debug("222");
+        List<Student_match_result> student_match_results = companyService.getStudentMatchResultByJob(cjid);
+        if (student_match_results.size() == 0 ){
+            log.debug("333");
+            companyService.getStudentMatchResultByJob(company_job, cjid);
+            student_match_results = companyService.getStudentMatchResultByJob(cjid);
+            log.debug("444");
+        }
         return Map.of(
                 "studentMatchResults", student_match_results
         );

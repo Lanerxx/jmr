@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Data
@@ -36,6 +37,8 @@ public class Job {
     @ManyToOne
     @JoinColumn(name = "j_pr_id")
     private Profession j_profession;
+
+
 
     @NotNull
     private EnumWarehouse.S_RANGE j_s_range;

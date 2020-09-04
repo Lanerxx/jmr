@@ -24,6 +24,6 @@ public class EnumWarehouse {
         未就业, 已就业
     }
     public enum F_LANGUAGE{
-        NO, JN3, JN2, ECET6, ECET4
+        NONE, JN3, JN2, CET6, CET4
     }
 }

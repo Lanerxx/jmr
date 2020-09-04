@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 public class Company_job {
-    private int cj_focus;
+    private boolean cj_focus;
 
     @EmbeddedId
     private Company_job_PK company_job_pk;

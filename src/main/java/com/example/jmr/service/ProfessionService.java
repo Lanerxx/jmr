@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -16,7 +18,8 @@ import java.util.List;
 public class ProfessionService {
     @Autowired
     private ProfessionRepository professtionRepository;
-
+    @Autowired
+    private ProfessionService professionService;
     /*--------------专业信息（Profession）---------------
     -------检索：管理员
     -------更新：管理员
@@ -42,6 +45,15 @@ public class ProfessionService {
     }
     public List<Profession> getAllProfessions(){
         return professtionRepository.findAll();
+    }
+    public Set<String> getProfessionsMClass(){
+        Set<String> professionMClasses = new HashSet<>();
+        List<Profession> professions = professionService.getAllProfessions();
+        professions.forEach(profession -> {
+            professionMClasses.add(profession.getP_m_class());
+        });
+
+        return professionMClasses;
     }
     public Profession getProfession(int pid){
         return professtionRepository.findById(pid).orElse(null);

@@ -9,14 +9,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/register/")
@@ -32,6 +31,25 @@ public class RegisterController {
     private ProfessionService professionService;
     @Autowired
     private PositionService positionService;
+
+    @GetMapping("index")
+    public Map getIndex(){
+        List<String> positionsName = positionService.listPositionsName();
+        Set<String> professionsMClass = professionService.getProfessionsMClass();
+        return Map.of(
+                "positions",positionsName,
+                "professionsMClass",professionsMClass
+        );
+    }
+
+    @PostMapping("index/professionsSClass")
+    public Map getIndex(@Valid @RequestBody  Profession profession){
+        log.debug(profession.getP_m_class());
+        Set<String> professionsSClass = professionService.getProfessionsSClassByMClass(profession.getP_m_class());
+        return Map.of(
+                "professionsSClass",professionsSClass
+        );
+    }
 
     @PostMapping("company")
     public Map registerCompany(@Valid @RequestBody Company company){

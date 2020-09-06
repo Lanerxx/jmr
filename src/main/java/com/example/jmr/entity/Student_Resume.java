@@ -12,5 +12,4 @@ import javax.persistence.Entity;
 public class Student_Resume {
     @EmbeddedId
     private Student_resume_PK student_resume_pk;
-
 }

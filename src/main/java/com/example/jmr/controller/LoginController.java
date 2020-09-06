@@ -56,6 +56,7 @@ public class LoginController {
 
     @PostMapping("login")
     public Map login(@RequestBody UserVo login, HttpServletResponse response) {
+        log.debug("---login");
         String userPassword = login.getUserPassword();
         int userId = 0;
         MyToken token = new MyToken();

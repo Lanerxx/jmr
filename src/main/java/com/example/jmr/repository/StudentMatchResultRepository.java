@@ -21,4 +21,9 @@ public interface StudentMatchResultRepository extends BaseRepository<Student_mat
     @Modifying
     @Query("DELETE  FROM Student_match_result  smr WHERE smr.smr_student.s_id=:sid AND smr.smr_resume.r_id=:rid ")
     void deleteStudent_match_resultsByStudentAndResume (@Param("sid")int sid,@Param("rid")int rid);
+
+    @Modifying
+    @Query("DELETE  FROM Student_match_result  smr WHERE smr.smr_resume.r_id=:rid ")
+    void deleteStudent_match_resultsByResume (@Param("rid")int rid);
+
 }

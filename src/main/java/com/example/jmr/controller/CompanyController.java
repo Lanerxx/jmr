@@ -3,6 +3,7 @@ package com.example.jmr.controller;
 import com.example.jmr.component.CheckIsNullComponent;
 import com.example.jmr.component.RequestComponent;
 import com.example.jmr.component.vo.CompanyJobVo;
+import com.example.jmr.component.vo.PasswordVo;
 import com.example.jmr.entity.*;
 import com.example.jmr.service.CompanyService;
 import com.example.jmr.service.PositionService;
@@ -11,6 +12,7 @@ import com.example.jmr.service.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -35,6 +37,8 @@ public class CompanyController {
     private CheckIsNullComponent checkIsNullComponent;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private PasswordEncoder encoder;
 
     @GetMapping("index")
     public Map getIndex(){
@@ -43,6 +47,23 @@ public class CompanyController {
                 "company",company
         );
     }
+
+    @PatchMapping("password")
+    public Map updatePassword(@RequestBody PasswordVo passwordVo){
+        log.debug(passwordVo.getOldPassword());
+        Company c = companyService.getCompany(requestComponent.getUid());
+        if (!encoder.matches(passwordVo.getOldPassword(), c.getC_password())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "您输入旧密码错误");
+        }else {
+            c.setC_password(encoder.encode(passwordVo.getNewPassword()));
+        }
+        companyService.updateCompany(c);
+        return Map.of(
+                "company",c
+        );
+    }
+
 
     @PatchMapping("information")
     public Map updateCompanyInformation(@RequestBody Company company){
@@ -58,9 +79,9 @@ public class CompanyController {
                 "company",c
         );
     }
+
     @GetMapping("jobs")
     public Map getJobs(){
-        log.debug("{}", requestComponent.getUid());
         List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         List<String> positionsName = positionService.listPositionsName();
         Set<String> professionsMClass = professionService.getProfessionsMClass();
@@ -80,7 +101,6 @@ public class CompanyController {
         List<Profession> prs = professionService.getProfessionsByMClass(job.getJ_profession().getP_m_class());
         job.setJ_profession(prs.get(0));
         job.setJ_position(po);
-        log.debug("{}", job.getJ_company().getC_name());
         if (checkIsNullComponent.objCheckIsNull(job)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "您还有未填写的信息，请完善信息后再提交");

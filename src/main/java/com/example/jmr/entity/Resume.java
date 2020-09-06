@@ -44,7 +44,7 @@ public class Resume {
 
     @NotNull
     @Column(length = 200)
-    private String remark;
+    private String r_remark;
 
     @NotNull
     @OneToOne

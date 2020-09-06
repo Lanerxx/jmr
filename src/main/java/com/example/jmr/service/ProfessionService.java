@@ -55,6 +55,14 @@ public class ProfessionService {
 
         return professionMClasses;
     }
+    public Set<String> getProfessionsSClassByMClass(String mClass){
+        Set<String> professionSClasses = new HashSet<>();
+        List<Profession> professions = professionService.getProfessionsByMClass(mClass);
+        professions.forEach(profession -> {
+            professionSClasses.add(profession.getP_s_class());
+        });
+        return professionSClasses;
+    }
     public Profession getProfession(int pid){
         return professtionRepository.findById(pid).orElse(null);
     }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.jmr.component.vo.ProfessionMClassVo;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,6 +55,21 @@ public class ProfessionService {
         });
 
         return professionMClasses;
+    }
+
+    public List<ProfessionMClassVo> getProfessionsMClassVo() {
+        List<ProfessionMClassVo> professionMClassVos = new ArrayList<>();
+        Set<String> professionsMClasses = professionService.getProfessionsMClass();
+        professionsMClasses.forEach(professionsMClass -> {
+            int professionsSClassCount = professionService.getProfessionsSClassByMClass(professionsMClass).size();
+            ProfessionMClassVo professionMClassVo = new ProfessionMClassVo();
+            professionMClassVo.setProfessionMClass(professionsMClass);
+            professionMClassVo.setProfessionSClassCount(professionsSClassCount);
+            List<Profession> professions = professionService.getProfessionsByMClass(professionsMClass);
+            professionMClassVo.setP_id(professions.get(0).getP_id());
+            professionMClassVos.add(professionMClassVo);
+        });
+        return professionMClassVos;
     }
     public Set<String> getProfessionsSClassByMClass(String mClass){
         Set<String> professionSClasses = new HashSet<>();

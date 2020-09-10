@@ -171,6 +171,9 @@ public class CompanyService {
     public List<Student_match_result> getStudentMatchResultByJob(int jid){
         return studentMatchResultRepository.getStudent_match_resultsByJob(jid).orElse(new ArrayList<>());
     }
+    public List<Student_match_result> getStudentMatchResultByCompany(int cid){
+        return studentMatchResultRepository.getStudent_match_resultsByCompany(cid).orElse(new ArrayList<>());
+    }
 
     //定时执行，匹配每一个学生相对于每个岗位的条件符合值
     public void getStudentMatchResult(){

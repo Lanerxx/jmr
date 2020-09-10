@@ -14,6 +14,9 @@ public interface StudentMatchResultRepository extends BaseRepository<Student_mat
     @Query("SELECT smr FROM Student_match_result  smr WHERE smr.smr_job.j_id=:jid")
     Optional<List<Student_match_result>> getStudent_match_resultsByJob (@Param("jid")int jid);
 
+    @Query("SELECT smr FROM Student_match_result  smr WHERE smr.smr_company.c_id=:cid")
+    Optional<List<Student_match_result>> getStudent_match_resultsByCompany (@Param("cid")int cid);
+
     @Modifying
     @Query("DELETE  FROM Student_match_result  smr WHERE smr.smr_company.c_id=:cid AND smr.smr_job.j_id=:jid ")
     void deleteStudent_match_resultsByCompanyAndJob (@Param("cid")int cid,@Param("jid")int jid);

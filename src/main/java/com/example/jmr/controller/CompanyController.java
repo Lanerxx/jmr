@@ -50,7 +50,6 @@ public class CompanyController {
 
     @PatchMapping("password")
     public Map updatePassword(@RequestBody PasswordVo passwordVo){
-        log.debug(passwordVo.getOldPassword());
         Company c = companyService.getCompany(requestComponent.getUid());
         if (!encoder.matches(passwordVo.getOldPassword(), c.getC_password())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -112,7 +111,6 @@ public class CompanyController {
         company_job_pk.setCompany(company);
         company_job_pk.setJob(job);
         companyJob.setCompany_job_pk(company_job_pk);
-        log.debug("{}", companyJob.getCompany_job_pk());
         companyService.addCompanyJob(companyJob);
         List<Company_job> companyJobs = companyService.getCompanyJobsByCompany(requestComponent.getUid());
         return Map.of(

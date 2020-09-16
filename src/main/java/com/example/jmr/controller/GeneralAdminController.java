@@ -56,7 +56,6 @@ public class GeneralAdminController {
     @GetMapping("professionMClassVo")
     public Map getProfessionsMClassVo(){
         List<ProfessionMClassVo> professionMClassVos = professionService.getProfessionsMClassVo();
-        log.debug("{}", professionMClassVos.size());
         return Map.of(
                 "professionMClassVos",professionMClassVos
         );
@@ -75,7 +74,6 @@ public class GeneralAdminController {
         Profession p = professionService.getProfession(profession.getP_id());
         List<Profession> professionsSClass = professionService.getProfessionsByMClass(p.getP_m_class());
         professionsSClass.forEach(profession1 -> {
-            log.debug("{}", profession1.getP_s_class());
         });
         return Map.of(
                 "professionsSClass",professionsSClass

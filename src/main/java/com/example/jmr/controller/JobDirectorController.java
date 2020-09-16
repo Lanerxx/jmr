@@ -62,7 +62,6 @@ public class JobDirectorController {
 
     @PostMapping("professionsSClass")
     public Map getIndex(@Valid @RequestBody Profession profession){
-        log.debug(profession.getP_m_class());
         Set<String> professionsSClass = professionService.getProfessionsSClassByMClass(profession.getP_m_class());
         return Map.of(
                 "professionsSClass",professionsSClass

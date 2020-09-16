@@ -185,89 +185,91 @@ public class CompanyService {
         // 1.获取所有企业已发布的岗位，并遍历
         List<Company_job> companyJobs = companyJobRepository.findAll();
         companyJobs.forEach(companyJob -> {
-            Job job = companyJob.getCompany_job_pk().getJob();
-            EnumWarehouse.J_SEX jobSex = job.getJ_sex();
-            EnumWarehouse.C_LEVEL jobLevel = job.getJ_c_level();
-            int jobProfessionId = job.getJ_profession().getP_id();
-            EnumWarehouse.E_HISTORY jobHistory = job.getJ_e_history();
-            int jobLanguages = job.getJ_f_language();
-            EnumWarehouse.S_RANGE jobRange = job.getJ_s_range();
-            int jobPositionId = job.getJ_position().getP_id();
-            EnumWarehouse.E_CITY jobCity = job.getJ_e_city();
+            if(companyJob.isCj_focus()){
+                Job job = companyJob.getCompany_job_pk().getJob();
+                EnumWarehouse.J_SEX jobSex = job.getJ_sex();
+                EnumWarehouse.C_LEVEL jobLevel = job.getJ_c_level();
+                int jobProfessionId = job.getJ_profession().getP_id();
+                EnumWarehouse.E_HISTORY jobHistory = job.getJ_e_history();
+                int jobLanguages = job.getJ_f_language();
+                EnumWarehouse.S_RANGE jobRange = job.getJ_s_range();
+                int jobPositionId = job.getJ_position().getP_id();
+                EnumWarehouse.E_CITY jobCity = job.getJ_e_city();
 
-            Company company = job.getJ_company();
+                Company company = job.getJ_company();
 
-            // 2.计算每一个岗位相对于某位一学生的条件符合值
-            studentResumes.forEach(studentResume -> {
-                Student student = studentResume.getStudent_resume_pk().getStudent();
-                Resume resume = studentResume.getStudent_resume_pk().getResume();
-                Student_match_result student_match_result = new Student_match_result();
-                Smr_base smr_base = new Smr_base();
-                int value = 0;
+                // 2.计算每一个岗位相对于某位一学生的条件符合值
+                studentResumes.forEach(studentResume -> {
+                    Student student = studentResume.getStudent_resume_pk().getStudent();
+                    Resume resume = studentResume.getStudent_resume_pk().getResume();
+                    Student_match_result student_match_result = new Student_match_result();
+                    Smr_base smr_base = new Smr_base();
+                    int value = 0;
 
-                student_match_result.setSmr_student(student);
-                student_match_result.setSmr_company(company);
-                student_match_result.setSmr_resume(resume);
-                student_match_result.setSmr_value(value);
-                student_match_result.setSmr_job(job);
-
-                EnumWarehouse.S_SEX studentSex = student.getS_sex();
-                EnumWarehouse.C_LEVEL studentLevel = student.getS_c_level();
-                int studentProfessionId = student.getS_profession().getP_id();
-                EnumWarehouse.E_HISTORY studentHistory = student.getS_e_history();
-                int studentLanguages = student.getS_f_language();
-                EnumWarehouse.S_RANGE studentRange = student.getS_s_range();
-                int studentPositionId = student.getS_e_position().getP_id();
-                EnumWarehouse.E_CITY studentCity = student.getS_e_city();
-                //3.分别计算8项待匹配项
-                //3.1 性别
-                if (enumComponent.verifySex(studentSex, jobSex)) {
-                    smr_base.setSmr_sex_value(1);
-                    value = value + 1;
-                }
-                //3.2 学校层次
-                if (enumComponent.verifySchoolLevel(studentLevel, jobLevel)) {
-                    smr_base.setSmr_level_value(1);
-                    value = value + 1;
-                }
-                //3.3 专业
-                if (studentProfessionId == jobProfessionId){
-                    smr_base.setSmr_profession_value(1);
-                    value = value + 1;
-                }
-                //3.4 学历
-                if (enumComponent.verifyHistory(studentHistory, jobHistory)){
-                    smr_base.setSmr_history_value(1);
-                    value = value + 1;
-                }
-                //3.5 外语水平
-                if (enumComponent.verifyLanguage(studentLanguages, jobLanguages)){
-                    smr_base.setSmr_language_value(1);
-                    value = value + 1;
-                }
-                //3.6 期望薪资
-                if (enumComponent.verifyRange(studentRange, jobRange)){
-                    smr_base.setSmr_range_value(1);
-                    value = value + 1;
-                };
-                //3.7 期望岗位
-                if (studentPositionId == jobPositionId){
-                    smr_base.setSmr_position_value(1);
-                    value = value + 1;
-                }
-                //3.8 就业意向地
-                if (enumComponent.verifyCity(studentCity, jobCity)){
-                    smr_base.setSmr_city_value(1);
-                    value = value + 1;
-                }
-                //4.若匹配两项以上则存入数据库
-                if (value >=2){
+                    student_match_result.setSmr_student(student);
+                    student_match_result.setSmr_company(company);
+                    student_match_result.setSmr_resume(resume);
                     student_match_result.setSmr_value(value);
-                    smrBaseRepository.save(smr_base);
-                    student_match_result.setSmr_base(smr_base);
-                    studentMatchResultRepository.save(student_match_result);
-                }
-            });
+                    student_match_result.setSmr_job(job);
+
+                    EnumWarehouse.S_SEX studentSex = student.getS_sex();
+                    EnumWarehouse.C_LEVEL studentLevel = student.getS_c_level();
+                    int studentProfessionId = student.getS_profession().getP_id();
+                    EnumWarehouse.E_HISTORY studentHistory = student.getS_e_history();
+                    int studentLanguages = student.getS_f_language();
+                    EnumWarehouse.S_RANGE studentRange = student.getS_s_range();
+                    int studentPositionId = student.getS_e_position().getP_id();
+                    EnumWarehouse.E_CITY studentCity = student.getS_e_city();
+                    //3.分别计算8项待匹配项
+                    //3.1 性别
+                    if (enumComponent.verifySex(studentSex, jobSex)) {
+                        smr_base.setSmr_sex_value(1);
+                        value = value + 1;
+                    }
+                    //3.2 学校层次
+                    if (enumComponent.verifySchoolLevel(studentLevel, jobLevel)) {
+                        smr_base.setSmr_level_value(1);
+                        value = value + 1;
+                    }
+                    //3.3 专业
+                    if (studentProfessionId == jobProfessionId){
+                        smr_base.setSmr_profession_value(1);
+                        value = value + 1;
+                    }
+                    //3.4 学历
+                    if (enumComponent.verifyHistory(studentHistory, jobHistory)){
+                        smr_base.setSmr_history_value(1);
+                        value = value + 1;
+                    }
+                    //3.5 外语水平
+                    if (enumComponent.verifyLanguage(studentLanguages, jobLanguages)){
+                        smr_base.setSmr_language_value(1);
+                        value = value + 1;
+                    }
+                    //3.6 期望薪资
+                    if (enumComponent.verifyRange(studentRange, jobRange)){
+                        smr_base.setSmr_range_value(1);
+                        value = value + 1;
+                    };
+                    //3.7 期望岗位
+                    if (studentPositionId == jobPositionId){
+                        smr_base.setSmr_position_value(1);
+                        value = value + 1;
+                    }
+                    //3.8 就业意向地
+                    if (enumComponent.verifyCity(studentCity, jobCity)){
+                        smr_base.setSmr_city_value(1);
+                        value = value + 1;
+                    }
+                    //4.若匹配两项以上则存入数据库
+                    if (value >=2){
+                        student_match_result.setSmr_value(value);
+                        smrBaseRepository.save(smr_base);
+                        student_match_result.setSmr_base(smr_base);
+                        studentMatchResultRepository.save(student_match_result);
+                    }
+                });
+            };
         });
     }
 
@@ -360,9 +362,6 @@ public class CompanyService {
             }
         });
         List<Student_match_result> studentMatchResults = companyService.getStudentMatchResultByJob(jid);
-        studentMatchResults.forEach(student_match_result -> {
-            log.debug("{}/ {}/ {} /{} ", student_match_result.getSmr_student().getS_name());
-        });
         return studentMatchResults;
     }
 
@@ -370,44 +369,34 @@ public class CompanyService {
     public List<Student_match_result> getStudentMatchResult(Map<String,Integer> focus, int jid){
         List<Student_match_result> studentMatchResults = companyService.getStudentMatchResultByJob(jid);
         List<Student_match_result> studentMatchResultsFocus = new ArrayList<>();
-        log.debug("{}", focus.toString());
         studentMatchResults.forEach(studentMatchResult -> {
             int value= 0;
             Student_match_result smr = new Student_match_result();
             Smr_base sb = studentMatchResult.getSmr_base();
             if (focus.get("sex") == 1 && sb.getSmr_sex_value() == 1) {
                 value = value + 1;
-                log.debug("sex{}", value);
             }
             if (focus.get("level") == 1 && sb.getSmr_level_value() == 1){
                 value = value + 1;
-                log.debug("level{}", value);
             }
             if (focus.get("profession") == 1 && sb.getSmr_profession_value() == 1) {
                 value = value + 1;
-                log.debug("profession{}", value);
             }
             if (focus.get("history") == 1 && sb.getSmr_history_value() == 1){
                 value = value + 1;
-                log.debug("history{}", value);
             }
             if (focus.get("language") == 1 && sb.getSmr_language_value() == 1){
                 value = value + 1;
-                log.debug("language{}", value);
             }
             if (focus.get("range") == 1 && sb.getSmr_language_value() == 1){
                 value = value + 1;
-                log.debug("range{}", value);
             }
             if (focus.get("position") == 1 && sb.getSmr_position_value() == 1){
                 value = value + 1;
-                log.debug("position{}", value);
             }
             if (focus.get("city") == 1 && sb.getSmr_city_value() == 1){
                 value = value + 1;
-                log.debug("{}", value);
             }
-            log.debug("{}", value);
             studentMatchResult.setSmr_value(value);
             studentMatchResultsFocus.add(studentMatchResult);
         });

@@ -44,9 +44,7 @@ public class StudentController {
 
     @GetMapping("index")
     public Map getIndex(){
-        log.debug("sfsdsdf");
         Student student = studentService.getStudent(requestComponent.getUid());
-        log.debug("{}",student.getS_name());
         List<String> positionsName = positionService.listPositionsName();
         Set<String> professionsMClass = professionService.getProfessionsMClass();
         return Map.of(
@@ -127,7 +125,6 @@ public class StudentController {
 
     @PatchMapping("password")
     public Map updatePassword(@RequestBody PasswordVo passwordVo){
-        log.debug(passwordVo.getOldPassword());
         Student s = studentService.getStudent(requestComponent.getUid());
         if (!encoder.matches(passwordVo.getOldPassword(), s.getS_password())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -144,9 +141,6 @@ public class StudentController {
     @GetMapping("resumes")
     public Map getResumes(){
         List<StudentResumeVo> studentResumeVos = studentService.getStudentResumeVoByStudent(requestComponent.getUid());
-        studentResumeVos.forEach(studentResumeVo -> {
-            log.debug("{} / {}", studentResumeVo.getResume().getR_career(),studentResumeVo.getResume().getR_m_course());
-        });
         return Map.of(
                 "studentResumeVos",studentResumeVos
         );
@@ -206,7 +200,6 @@ public class StudentController {
 
     @PostMapping("studentResume")
     public Map addStudentResume(@Valid @RequestBody Student_Resume studentResume){
-        log.debug("{}", studentResume.getStudent_resume_pk().getResume().getR_id());
         int rid = studentResume.getStudent_resume_pk().getResume().getR_id();
         Resume r = studentService.getResume(rid);
         if (r == null){

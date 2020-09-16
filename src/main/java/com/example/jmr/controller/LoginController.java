@@ -56,7 +56,6 @@ public class LoginController {
 
     @PostMapping("login")
     public Map login(@RequestBody UserVo login, HttpServletResponse response) {
-        log.debug("---login");
         String userPassword = login.getUserPassword();
         int userId = 0;
         MyToken token = new MyToken();
@@ -67,7 +66,6 @@ public class LoginController {
         }
         //管理员使用用户名和密码登陆
         if (login.isAdmin() == true){
-            log.debug("{}",login.isAdmin());
             String userName = login.getUserName();
             if (userName == null){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -76,7 +74,6 @@ public class LoginController {
             Admin admin = Optional.ofNullable(adminService.getAdmin(userName))
                     .filter(a -> encoder.matches(userPassword, a.getA_password()))
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户名和密码错误"));
-            log.debug("{}", admin);
             userId = admin.getA_id();
             if (Admin.A_TYPE.系统管理员 == admin.getA_type()){
                 roleCode = roleSystemAdmin;
